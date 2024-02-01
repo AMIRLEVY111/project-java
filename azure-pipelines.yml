@@ -1,0 +1,30 @@
+trigger:
+- main
+
+resources:
+- repo: self
+
+variables:
+  tag: '$(Build.BuildId)'
+
+stages:
+- stage: Build
+  displayName: Build image 
+  jobs:
+  - job: Build
+    displayName: Build 
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'azure-registery'
+        command: 'login'
+    - task: Docker@2
+      displayName: Building a new container and pushing to docker hub
+      inputs:
+        repository: 'amir3170/project'
+        command: buildAndPush
+        dockerfile: '**/Dockerfile'
+        tags: |
+          $(tag)
